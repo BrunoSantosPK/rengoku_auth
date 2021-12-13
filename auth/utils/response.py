@@ -15,6 +15,7 @@ class Response:
         200: sucesso
         400: requisição inválida
         444: regra de negócio não atendida
+        445: erro de código
         '''
         self.__body["statusCode"] = valor
     
