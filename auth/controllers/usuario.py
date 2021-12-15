@@ -67,7 +67,6 @@ class ControllerUsuario:
             email = body["email"]
             senha = ControllerUsuario.codificar(body["senha"])
 
-            session.begin()
             q = session.query(Usuarios).filter_by(
                 email=email,
                 senha=senha
@@ -92,6 +91,7 @@ class ControllerUsuario:
 
         except BaseException as e:
             session.rollback()
+            res.set_status(445)
             res.set_attr("log", str(e))
 
         finally:
@@ -101,7 +101,26 @@ class ControllerUsuario:
 
     @staticmethod
     def alterar_senha() -> Response:
-        pass
+        # Recupera corpo da requisição e inicia variáveis de controle
+        body = json.loads(request.data)
+        session = get_session()
+        res = Response()
+
+        try:
+            # Verifica senha atual informada
+            session.begin()
+
+            # Altera a senha
+        
+        except BaseException as e:
+            session.rollback()
+            res.set_status(445)
+            res.set_attr("log", str(e))
+        
+        finally:
+            session.close()
+
+        return res
 
     @staticmethod
     def recuperar_senha() -> Response:

@@ -1,10 +1,27 @@
 import os
 import jwt
 from typing import Tuple
+from flask import request
 from datetime import datetime, timedelta
+from auth.utils.response import Response
 
 
 class ControllerAutenticacao:
+
+    @staticmethod
+    def validar() -> Response:
+        # Recupera header e inicia as variáveis de controle
+        res = Response()
+        id = int(request.headers["id"])
+        token = request.headers["authorization"]
+        
+        # Verifica status do JWT
+        sucesso, log = ControllerAutenticacao.validar_jwt(token, id)
+        if not sucesso:
+            res.set_status(401)
+            res.set_attr("log", log)
+        
+        return res
     
     @staticmethod
     def gerar_jwt(id: int) -> Tuple[bool, str]:

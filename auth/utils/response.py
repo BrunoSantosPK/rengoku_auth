@@ -14,6 +14,7 @@ class Response:
         Define o status para response. Alguns padrões internos:
         200: sucesso
         400: requisição inválida
+        401: usuário não autorizado
         444: regra de negócio não atendida
         445: erro de código
         '''
