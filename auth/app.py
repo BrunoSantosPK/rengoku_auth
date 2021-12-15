@@ -44,6 +44,8 @@ def autenticado():
 @application.route("/usuario/alterar/senha", methods=["PUT"])
 def alterar_senha():
     return Pipeline.run(
+        ValidatorAutenticacao.validar,
+        ControllerAutenticacao.validar,
         ValidatorUsuario.alterar_senha,
         ControllerUsuario.alterar_senha
     )
