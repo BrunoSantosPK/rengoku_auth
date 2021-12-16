@@ -28,6 +28,7 @@ class ControllerUsuario:
                 res.set_attr("log", "Senhas não correspondentes.")
 
             # Verificar se o email já está cadastrado
+            session.begin()
             if valido:
                 q = session.query(Usuarios).filter_by(email=body["email"])
                 if len(q.all()) != 0:
@@ -37,7 +38,6 @@ class ControllerUsuario:
 
             # Registra informação no banco
             if valido:
-                session.begin()
                 session.add(Usuarios(
                     nome=body["nome"],
                     email=body["email"],
@@ -109,8 +109,31 @@ class ControllerUsuario:
         try:
             # Verifica senha atual informada
             session.begin()
+            senha = ControllerUsuario.codificar(body["senha_nova"])
+            q = session.query(Usuarios).filter_by(
+                email=body["email"],
+                senha=ControllerUsuario.codificar(body["senha_antiga"])
+            ).all()
 
-            # Altera a senha
+            # Sequência de validações de regras de negócio
+            if len(q) != 1:
+                res.set_status(444)
+                res.set_attr("log", "A senha atual não está correta.")
+
+            elif body["senha_antiga"] == body["senha_nova"]:
+                res.set_status(444)
+                res.set_attr("log", "A nova senha não deve ser igual a senha antiga.")
+
+            elif body["senha_nova"] != body["senha_nova_repeticao"]:
+                res.set_status(444)
+                res.set_attr("log", "As novas senhas não são iguais.")
+
+            else:
+                # Altera a senha no banco de dados
+                session.query(Usuarios).filter(
+                    Usuarios.id == q[0].id
+                ).update({"senha": senha})
+                session.commit()
         
         except BaseException as e:
             session.rollback()

@@ -53,7 +53,8 @@ class ValidatorUsuario:
         regras = {
             "email": [R.Required, R.Mail],
             "senha_antiga": [R.Required, R.Min(8)],
-            "senha_nova": [R.Required, R.Min(8)]
+            "senha_nova": [R.Required, R.Min(8)],
+            "senha_nova_repeticao": [R.Required, R.Min(8)]
         }
 
         valido, _, erros = validate(req, regras, return_info=True)
